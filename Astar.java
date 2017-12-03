@@ -1,4 +1,3 @@
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -35,8 +34,6 @@ public class Astar {
         this.puzzleSize = puzzleSize;
         this.printSize = printSize;
         addToQueue(str,null);
-        System.out.println("Depth limit is currently set at " + limit);
-        System.out.println();
     }
 
     void doSearch () {
@@ -52,8 +49,9 @@ public class Astar {
                 if (confirm.equals("y") || confirm.equals("yes")) {
                     printSolution(currState);
                 }
-                else if (confirm.equalsIgnoreCase("y") || confirm.equalsIgnoreCase("no")) {
-                    System.out.println("Cancelled");
+                else if (confirm.equalsIgnoreCase("n") || confirm.equalsIgnoreCase("no")) {
+                    System.out.println("Closing");
+                    System.exit(0);
                 }
                 break;
             }
@@ -191,34 +189,51 @@ public class Astar {
 
     void printSolution (String currState){
         if (solution) {
-            System.out.println("Solution found in " +levelDepth.get(currState)+" step(s)");
-            System.out.println("Node generated: "+ nodes);
-            System.out.println("Unique Node generated: "+ unique);
+            System.out.println("Number of steps: " +levelDepth.get(currState));
+            //System.out.println("Node generated: "+ nodes);
+            System.out.println("Opened: "+ unique);
+            System.out.println("Max in memory " + limit);
+            System.out.println();
         }
         else {
             System.out.println("Solution not found!");
-            System.out.println("Depth Limit Reached!");
-            System.out.println("Node generated: "+ nodes);
-            System.out.println("Unique Node generated: "+ unique);
+            System.out.println("Max memory reached!");
+            System.out.println("Opened: "+ unique);
+            //System.out.println("Node generated: "+ nodes);
         }
 
         String traceState = currState;
+        String[] printArray = new String[levelDepth.get(currState) + 1];
         int i = 0;
         while (traceState != null) {
-            System.out.println("Step: " + levelDepth.get(traceState));
-            System.out.println("Step: " + i);
+           
+            printArray[i] = traceState;
+            traceState = stateHistory.get(traceState);
+            
+            //System.out.println("Array at "+ i + ", value "+printArray[i]);
+            i++;
+        }
+        int s = printArray.length - 1;
+        int r = 0;
+        String line;
+        while (s > -1) {
+            System.out.println("Step: " + r++);
+            line = printArray[s];
             try {
 		        for(int z = 0; z < puzzleSize; z++) {
-                    System.out.print(" " + String.valueOf(traceState.charAt(z)) + " ");
+                    System.out.print(" " + String.valueOf(line.charAt(z)) + " ");
                     if ((z + 1) % 3 == 0) {
                         System.out.println();
                     }
                 }
                 System.out.println();
             }
-		    catch (NullPointerException e) {}
-            traceState = stateHistory.get(traceState);
-            i++;
+            catch (NullPointerException e) {}
+            //printArray[i] = traceState;
+            //traceState = stateHistory.get(traceState);
+            
+            //System.out.println("Array at "+ i + ", value "+printArray[i]);i++;
+            s--;
         }
 	}
 }
